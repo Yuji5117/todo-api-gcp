@@ -13,9 +13,9 @@ services:
     ports:
       - "5432:5432"
     environment:
-      - POSTGRES_DB=todoapp
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
 
 volumes:
   pgdata:
