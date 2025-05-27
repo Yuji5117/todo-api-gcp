@@ -8,7 +8,7 @@ app.get("/todos", async (_, res) => {
   try {
     // const result = await pool.query("SELECT * FROM todo");
     // res.json(result.rows);
-    res.send("Check!!");
+    res.send("Change Again!!");
   } catch (err) {
     res.status(500).send("Server error");
   }
