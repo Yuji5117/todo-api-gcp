@@ -39,3 +39,6 @@ images:
 
 substitutions:
   _COMMIT_SHA: "manualbuild"
+
+options:
+  logging: 'CLOUD_LOGGING_ONLY'
