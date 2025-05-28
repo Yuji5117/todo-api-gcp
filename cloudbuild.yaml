@@ -35,7 +35,7 @@ steps:
       ]
 
 images:
-  - "asia-northeast1-docker.pkg.dev/my-project/todo-repo/todo-api:$COMMIT_SHA"
+  - "asia-northeast1-docker.pkg.dev/${PROJECT_ID}/cloud-run-source-deploy/todo-api-gcp:$COMMIT_SHA"
 
 options:
   logging: "CLOUD_LOGGING_ONLY"
