@@ -1,7 +1,7 @@
 import express from "express";
 import { pool } from "./config/db";
 
-const port = 8080;
+const port = 8000;
 const app = express();
 
 app.get("/todos", async (_, res) => {
