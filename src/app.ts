@@ -1,4 +1,4 @@
-import express from "express";
+import express, { Request, Response } from "express";
 import bcrypt from "bcrypt";
 
 const app = express();
@@ -20,7 +20,7 @@ const users: User[] = [
 
 app.use(express.json());
 
-app.post("/register", async (req, res) => {
+app.post("/register", async (req: Request, res: Response) => {
   // extract  email and password from request
   const { email, password } = req.body;
   // check if the email already exists or not
@@ -44,6 +44,35 @@ app.post("/register", async (req, res) => {
     message: "User registered successfully.",
     user: { id: newUser.id, email: newUser.email },
   });
+});
+
+app.post("/login", async (req: Request, res: Response) => {
+  // Extract email and password from req
+  const { email, password } = req.body;
+  // return 400 bad request if either email or password is missing
+  if (!email || !password) {
+    res.status(400).json({ message: "Email and Password are required." });
+    return;
+  }
+  // search user by email
+  try {
+    const user = users.find((user) => user.email === email);
+    if (!user) {
+      res.status(401).json({ message: "Invalid email or password." });
+      return;
+    }
+    // check password
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      res.status(401).json({ message: "Invalid email or password." });
+      return;
+    }
+    // response 200 with message
+    res.status(200).json({ message: "Login successful." });
+  } catch (error) {
+    console.log("Login error:", error);
+    res.status(500).json({ message: "Internal server error." });
+  }
 });
 
 app.get("/tasks", async (_, res) => {
