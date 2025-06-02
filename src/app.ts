@@ -23,13 +23,19 @@ app.use(express.json());
 app.post("/register", async (req: Request, res: Response) => {
   // extract  email and password from request
   const { email, password } = req.body;
+  // return 400 bad request if either email or password is missing
+  if (!email || !password) {
+    res.status(400).json({ message: "Email and Password are required." });
+    return;
+  }
   // check if the email already exists or not
   const isExist = users.some((user) => user.email === email);
   // if exists then throw err
   if (isExist) {
     res.status(409).json({ message: "User already exists." });
+    return;
   }
-  // if not,
+
   // Hash the email address
   const hashedPassword = await bcrypt.hash(password, 10);
   // store them into database
