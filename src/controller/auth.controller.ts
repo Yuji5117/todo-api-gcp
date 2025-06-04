@@ -1,6 +1,9 @@
 import { Request, Response } from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 interface User {
   id: number;
@@ -74,9 +77,9 @@ export const login = async (req: Request, res: Response) => {
 
     // JWT
     const jwtToken = jwt.sign(
-      { userId: user.id, email: user.email, password: user.password },
+      { userId: user.id, email: user.email },
       JWT_SECRET,
-      { expiresIn: "1min" }
+      { expiresIn: "1h" }
     );
 
     // response 200 with message
