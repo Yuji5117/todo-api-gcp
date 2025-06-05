@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
+import { prisma } from "../config/db";
 
 dotenv.config();
 
@@ -29,7 +30,7 @@ export const register = async (req: Request, res: Response) => {
     return;
   }
 
-  const isExist = users.some((user) => user.email === email);
+  const isExist = await prisma.user.findUnique({ where: { email } });
 
   if (isExist) {
     res.status(409).json({ message: "User already exists." });
@@ -38,12 +39,9 @@ export const register = async (req: Request, res: Response) => {
 
   const hashedPassword = await bcrypt.hash(password, 10);
 
-  const newUser = {
-    id: users.length + 1,
-    email: email,
-    password: hashedPassword,
-  };
-  users.push(newUser);
+  const newUser = await prisma.user.create({
+    data: { email: email, password: hashedPassword },
+  });
 
   res.status(201).json({
     message: "User registered successfully.",
