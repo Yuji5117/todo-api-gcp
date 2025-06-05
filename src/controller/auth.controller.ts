@@ -6,20 +6,6 @@ import { prisma } from "../config/db";
 
 dotenv.config();
 
-interface User {
-  id: number;
-  email: string;
-  password: string;
-}
-
-const users: User[] = [
-  {
-    id: 1,
-    email: "1234yuji@gmail.com",
-    password: "12345abcd",
-  },
-];
-
 const JWT_SECRET = process.env.JWT_SECRET || "jwt-secret-key";
 
 export const register = async (req: Request, res: Response) => {
@@ -58,7 +44,7 @@ export const login = async (req: Request, res: Response) => {
   }
 
   try {
-    const user = users.find((user) => user.email === email);
+    const user = await prisma.user.findUnique({ where: { email } });
     if (!user) {
       res.status(401).json({ message: "Invalid email or password." });
       return;
