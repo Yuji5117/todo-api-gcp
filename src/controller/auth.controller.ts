@@ -16,23 +16,28 @@ export const register = async (req: Request, res: Response) => {
     return;
   }
 
-  const isExist = await prisma.user.findUnique({ where: { email } });
+  try {
+    const isExist = await prisma.user.findUnique({ where: { email } });
 
-  if (isExist) {
-    res.status(409).json({ message: "User already exists." });
-    return;
+    if (isExist) {
+      res.status(409).json({ message: "User already exists." });
+      return;
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const newUser = await prisma.user.create({
+      data: { email: email, password: hashedPassword },
+    });
+
+    res.status(201).json({
+      message: "User registered successfully.",
+      user: { id: newUser.id, email: newUser.email },
+    });
+  } catch (error) {
+    console.log("Login error:", error);
+    res.status(500).json({ message: "Internal server error." });
   }
-
-  const hashedPassword = await bcrypt.hash(password, 10);
-
-  const newUser = await prisma.user.create({
-    data: { email: email, password: hashedPassword },
-  });
-
-  res.status(201).json({
-    message: "User registered successfully.",
-    user: { id: newUser.id, email: newUser.email },
-  });
 };
 
 export const login = async (req: Request, res: Response) => {
