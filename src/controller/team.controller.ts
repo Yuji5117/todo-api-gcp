@@ -1,14 +1,32 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 import { prisma } from "../config/db";
 import { AuthenticatedRequest } from "../types";
 
-export const getAllTeam = (req: Request, res: Response) => {
-  res.send("get all teams");
+export const getAllTeam = async (req: AuthenticatedRequest, res: Response) => {
+  const userId = req.userId;
+
+  if (!userId) {
+    res.status(400).json({ message: "userId are required." });
+    return;
+  }
+
+  try {
+    const teams = await prisma.team.findMany({
+      where: { TeamMembers: { some: { userId: parseInt(userId, 10) } } },
+      include: { TeamMembers: true },
+    });
+
+    res
+      .status(200)
+      .json({ message: "Teams retrieved successfully.", data: { teams } });
+  } catch (error) {
+    console.log("Team get error:", error);
+    res.status(500).json({ message: "Internal server error." });
+  }
 };
 
 export const createTeam = async (req: AuthenticatedRequest, res: Response) => {
   const userId = req.userId;
-  console.log(req.body);
   const { name } = req.body;
 
   if (!userId || !name) {

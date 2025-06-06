@@ -5,7 +5,7 @@ import { authenticateToken } from "../middleware/auth.middleware";
 const router = Router();
 
 // Get all teams that you are joinning
-router.get("/", getAllTeam);
+router.get("/", authenticateToken, getAllTeam);
 
 // get a team by id
 
