@@ -1,5 +1,6 @@
 import { Router } from "express";
-import { getAllTeam } from "../controller/team.controller";
+import { createTeam, getAllTeam } from "../controller/team.controller";
+import { authenticateToken } from "../middleware/aurh.middleware";
 
 const router = Router();
 
@@ -9,6 +10,7 @@ router.get("/", getAllTeam);
 // get a team by id
 
 // create team
+router.post("/", authenticateToken, createTeam);
 
 // update team
 

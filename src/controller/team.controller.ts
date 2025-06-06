@@ -1,22 +1,26 @@
 import { Request, Response } from "express";
 import { prisma } from "../config/db";
+import { AuthenticatedRequest } from "../types";
 
 export const getAllTeam = (req: Request, res: Response) => {
   res.send("get all teams");
 };
 
-export const createTeam = async (req: Request, res: Response) => {
-  const { userId, name } = req.body;
+export const createTeam = async (req: AuthenticatedRequest, res: Response) => {
+  const userId = req.userId;
+  console.log(req.body);
+  const { name } = req.body;
 
   if (!userId || !name) {
     res.status(400).json({ message: "userId and name are required." });
+    return;
   }
 
   try {
     const newTeam = await prisma.team.create({ data: { name } });
 
     const newTeamMember = await prisma.teamMember.create({
-      data: { userId, teamId: newTeam.id, role: "owner" },
+      data: { userId: parseInt(userId, 10), teamId: newTeam.id, role: "owner" },
     });
 
     res.status(201).json({
