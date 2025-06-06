@@ -1,7 +1,7 @@
 import express from "express";
 import authRouter from "./route/auth.route";
 import teamRouter from "./route/team.route";
-import { authenticateToken } from "./middleware/aurh.middleware";
+import { authenticateToken } from "./middleware/auth.middleware";
 
 const app = express();
 const tasks = require("./data/task");

@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { createTeam, getAllTeam } from "../controller/team.controller";
-import { authenticateToken } from "../middleware/aurh.middleware";
+import { authenticateToken } from "../middleware/auth.middleware";
 
 const router = Router();
 
