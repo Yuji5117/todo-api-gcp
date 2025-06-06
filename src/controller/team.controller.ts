@@ -25,6 +25,30 @@ export const getAllTeam = async (req: AuthenticatedRequest, res: Response) => {
   }
 };
 
+export const getTeamById = async (req: AuthenticatedRequest, res: Response) => {
+  const { id } = req.params;
+
+  if (!id) {
+    res.status(400).json({ message: "teamId are required." });
+    return;
+  }
+
+  try {
+    const team = await prisma.team.findUnique({
+      where: {
+        id: parseInt(id, 10),
+      },
+    });
+
+    res
+      .status(200)
+      .json({ message: "A team retrieved successfully.", data: { team } });
+  } catch (error) {
+    console.log("Team created error:", error);
+    res.status(500).json({ message: "Internal server error." });
+  }
+};
+
 export const createTeam = async (req: AuthenticatedRequest, res: Response) => {
   const userId = req.userId;
   const { name } = req.body;

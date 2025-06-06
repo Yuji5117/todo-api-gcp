@@ -1,15 +1,15 @@
 import { Router } from "express";
-import { createTeam, getAllTeam } from "../controller/team.controller";
+import {
+  createTeam,
+  getAllTeam,
+  getTeamById,
+} from "../controller/team.controller";
 import { authenticateToken } from "../middleware/auth.middleware";
 
 const router = Router();
 
-// Get all teams that you are joinning
 router.get("/", authenticateToken, getAllTeam);
-
-// get a team by id
-
-// create team
+router.get("/:id", authenticateToken, getTeamById);
 router.post("/", authenticateToken, createTeam);
 
 // update team
