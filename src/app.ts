@@ -14,18 +14,6 @@ app.use("/api/auth", authRouter);
 
 app.use("/api/teams", teamRouter);
 
-app.get("/tasks", async (req, res, next) => {
-  try {
-    console.log("erro");
-    if (!req.params.userId) {
-      next(new AppError("userId is required.", 400));
-    }
-    res.send(tasks);
-  } catch (err) {
-    res.status(500).send("Server error");
-  }
-});
-
 app.use(errorHandler);
 
 module.exports = app;
