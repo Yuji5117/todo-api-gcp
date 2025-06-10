@@ -1,12 +1,17 @@
-import { Response } from "express";
+import { NextFunction, Response } from "express";
 import { prisma } from "../config/db";
 import { AuthenticatedRequest } from "../types";
+import { AppError } from "../utils/AppError";
 
-export const getAllTeam = async (req: AuthenticatedRequest, res: Response) => {
+export const getAllTeam = async (
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+) => {
   const userId = req.userId;
 
   if (!userId) {
-    res.status(400).json({ message: "userId are required." });
+    next(new AppError("userId is required.", 400));
     return;
   }
 
@@ -20,16 +25,19 @@ export const getAllTeam = async (req: AuthenticatedRequest, res: Response) => {
       .status(200)
       .json({ message: "Teams retrieved successfully.", data: { teams } });
   } catch (error) {
-    console.log("Team get error:", error);
-    res.status(500).json({ message: "Internal server error." });
+    next(new AppError("Internal server error.", 500));
   }
 };
 
-export const getTeamById = async (req: AuthenticatedRequest, res: Response) => {
+export const getTeamById = async (
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+) => {
   const { id } = req.params;
 
   if (!id) {
-    res.status(400).json({ message: "teamId are required." });
+    next(new AppError("teamId is required.", 400));
     return;
   }
 
@@ -44,17 +52,21 @@ export const getTeamById = async (req: AuthenticatedRequest, res: Response) => {
       .status(200)
       .json({ message: "A team retrieved successfully.", data: { team } });
   } catch (error) {
-    console.log("Team created error:", error);
-    res.status(500).json({ message: "Internal server error." });
+    console.error("Team created error:", error);
+    next(new AppError("Internal server error.", 500));
   }
 };
 
-export const createTeam = async (req: AuthenticatedRequest, res: Response) => {
+export const createTeam = async (
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+) => {
   const userId = req.userId;
   const { name } = req.body;
 
   if (!userId || !name) {
-    res.status(400).json({ message: "userId and name are required." });
+    next(new AppError("userId and name are required.", 400));
     return;
   }
 
@@ -74,6 +86,6 @@ export const createTeam = async (req: AuthenticatedRequest, res: Response) => {
     });
   } catch (error) {
     console.log("Team created error:", error);
-    res.status(500).json({ message: "Internal server error." });
+    next(new AppError("Internal server error.", 500));
   }
 };
