@@ -2,6 +2,7 @@ import jwt from "jsonwebtoken";
 import { NextFunction, Request, Response } from "express";
 import dotenv from "dotenv";
 import { AuthenticatedRequest } from "../types";
+import { AppError } from "../utils/AppError";
 
 dotenv.config();
 
@@ -15,7 +16,7 @@ export const authenticateToken = (
   const token = req.headers["authorization"]?.split(" ")[1];
 
   if (!token) {
-    res.status(401).json({ message: "No token" });
+    next(new AppError("No token", 401));
     return;
   }
 
@@ -29,10 +30,11 @@ export const authenticateToken = (
       req.userId = payload.userId as string;
       next();
     } else {
-      res.status(403).json({ message: "Invalid token payload" });
+      next(new AppError("Invalid token payload, 403"));
+      return;
     }
   } catch (error) {
-    res.status(403).json({ message: "Invalid token" });
+    next(new AppError("Invalid token", 403));
     return;
   }
 };
