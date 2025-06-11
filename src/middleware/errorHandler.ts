@@ -8,9 +8,11 @@ export const errorHandler = (
   next: NextFunction
 ) => {
   if (err instanceof AppError) {
-    res.status(err.statusCode).json({ message: err.message });
+    res.status(err.statusCode).json({ success: false, message: err.message });
     return;
   }
   console.error(err);
-  res.status(500).json({ message: "Internal server test error." });
+  res
+    .status(500)
+    .json({ success: false, message: "Internal server test error." });
 };
