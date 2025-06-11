@@ -16,25 +16,14 @@ export const authenticateToken = (
   const token = req.headers["authorization"]?.split(" ")[1];
 
   if (!token) {
-    next(new AppError("No token", 401));
-    return;
+    throw new AppError("No token", 401);
   }
 
-  try {
-    const payload = jwt.verify(token, JWT_SECRET);
-    if (
-      typeof payload === "object" &&
-      payload !== null &&
-      "userId" in payload
-    ) {
-      req.userId = payload.userId as string;
-      next();
-    } else {
-      next(new AppError("Invalid token payload, 403"));
-      return;
-    }
-  } catch (error) {
-    next(new AppError("Invalid token", 403));
-    return;
+  const payload = jwt.verify(token, JWT_SECRET);
+  if (typeof payload === "object" && payload !== null && "userId" in payload) {
+    req.userId = payload.userId as string;
+    next();
+  } else {
+    throw new AppError("Invalid token payload, 403");
   }
 };

@@ -3,89 +3,60 @@ import { prisma } from "../config/db";
 import { AuthenticatedRequest } from "../types";
 import { AppError } from "../utils/AppError";
 
-export const getAllTeam = async (
-  req: AuthenticatedRequest,
-  res: Response,
-  next: NextFunction
-) => {
+export const getAllTeam = async (req: AuthenticatedRequest, res: Response) => {
   const userId = req.userId;
 
   if (!userId) {
-    next(new AppError("userId is required.", 400));
-    return;
+    throw new AppError("userId is required.", 400);
   }
 
-  try {
-    const teams = await prisma.team.findMany({
-      where: { TeamMembers: { some: { userId: parseInt(userId, 10) } } },
-      include: { TeamMembers: true },
-    });
+  const teams = await prisma.team.findMany({
+    where: { TeamMembers: { some: { userId: parseInt(userId, 10) } } },
+    include: { TeamMembers: true },
+  });
 
-    res
-      .status(200)
-      .json({ message: "Teams retrieved successfully.", data: { teams } });
-  } catch (error) {
-    next(new AppError("Internal server error.", 500));
-  }
+  res
+    .status(200)
+    .json({ message: "Teams retrieved successfully.", data: { teams } });
 };
 
-export const getTeamById = async (
-  req: AuthenticatedRequest,
-  res: Response,
-  next: NextFunction
-) => {
+export const getTeamById = async (req: AuthenticatedRequest, res: Response) => {
   const { id } = req.params;
 
   if (!id) {
-    next(new AppError("teamId is required.", 400));
-    return;
+    throw new AppError("teamId is required.", 400);
   }
 
-  try {
-    const team = await prisma.team.findUnique({
-      where: {
-        id: parseInt(id, 10),
-      },
-    });
+  const team = await prisma.team.findUnique({
+    where: {
+      id: parseInt(id, 10),
+    },
+  });
 
-    res
-      .status(200)
-      .json({ message: "A team retrieved successfully.", data: { team } });
-  } catch (error) {
-    console.error("Team created error:", error);
-    next(new AppError("Internal server error.", 500));
-  }
+  res
+    .status(200)
+    .json({ message: "A team retrieved successfully.", data: { team } });
 };
 
-export const createTeam = async (
-  req: AuthenticatedRequest,
-  res: Response,
-  next: NextFunction
-) => {
+export const createTeam = async (req: AuthenticatedRequest, res: Response) => {
   const userId = req.userId;
   const { name } = req.body;
 
   if (!userId || !name) {
-    next(new AppError("userId and name are required.", 400));
-    return;
+    throw new AppError("userId and name are required.", 400);
   }
 
-  try {
-    const newTeam = await prisma.team.create({ data: { name } });
+  const newTeam = await prisma.team.create({ data: { name } });
 
-    const newTeamMember = await prisma.teamMember.create({
-      data: { userId: parseInt(userId, 10), teamId: newTeam.id, role: "owner" },
-    });
+  const newTeamMember = await prisma.teamMember.create({
+    data: { userId: parseInt(userId, 10), teamId: newTeam.id, role: "owner" },
+  });
 
-    res.status(201).json({
-      message: "Team was created successfully.",
-      data: {
-        newTeam,
-        newTeamMember,
-      },
-    });
-  } catch (error) {
-    console.log("Team created error:", error);
-    next(new AppError("Internal server error.", 500));
-  }
+  res.status(201).json({
+    message: "Team was created successfully.",
+    data: {
+      newTeam,
+      newTeamMember,
+    },
+  });
 };
