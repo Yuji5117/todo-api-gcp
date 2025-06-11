@@ -2,6 +2,7 @@ import { NextFunction, Response } from "express";
 import { prisma } from "../config/db";
 import { AuthenticatedRequest } from "../types";
 import { AppError } from "../utils/AppError";
+import { sendSuccess } from "../utils/sendResponse";
 
 export const getAllTeam = async (req: AuthenticatedRequest, res: Response) => {
   const userId = req.userId;
@@ -15,9 +16,7 @@ export const getAllTeam = async (req: AuthenticatedRequest, res: Response) => {
     include: { TeamMembers: true },
   });
 
-  res
-    .status(200)
-    .json({ message: "Teams retrieved successfully.", data: { teams } });
+  sendSuccess(res, "Teams retrieved successfully.", teams);
 };
 
 export const getTeamById = async (req: AuthenticatedRequest, res: Response) => {
@@ -33,9 +32,7 @@ export const getTeamById = async (req: AuthenticatedRequest, res: Response) => {
     },
   });
 
-  res
-    .status(200)
-    .json({ message: "A team retrieved successfully.", data: { team } });
+  sendSuccess(res, "A team retrieved successfully.", team);
 };
 
 export const createTeam = async (req: AuthenticatedRequest, res: Response) => {
@@ -48,15 +45,19 @@ export const createTeam = async (req: AuthenticatedRequest, res: Response) => {
 
   const newTeam = await prisma.team.create({ data: { name } });
 
+  console.log("new team created:", newTeam);
+
   const newTeamMember = await prisma.teamMember.create({
     data: { userId: parseInt(userId, 10), teamId: newTeam.id, role: "owner" },
   });
 
-  res.status(201).json({
-    message: "Team was created successfully.",
-    data: {
+  sendSuccess(
+    res,
+    "Team was created successfully.",
+    {
       newTeam,
       newTeamMember,
     },
-  });
+    201
+  );
 };

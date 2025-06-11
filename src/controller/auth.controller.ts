@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import { prisma } from "../config/db";
 import { AppError } from "../utils/AppError";
+import { sendSuccess } from "../utils/sendResponse";
 
 dotenv.config();
 
@@ -28,10 +29,15 @@ export const register = async (req: Request, res: Response) => {
     data: { email: email, password: hashedPassword },
   });
 
-  res.status(201).json({
-    message: "User registered successfully.",
-    user: { id: newUser.id, email: newUser.email },
-  });
+  sendSuccess(
+    res,
+    "User registered successfully.",
+    {
+      id: newUser.id,
+      email: newUser.email,
+    },
+    201
+  );
 };
 
 export const login = async (req: Request, res: Response) => {
@@ -57,5 +63,5 @@ export const login = async (req: Request, res: Response) => {
     { expiresIn: "1h" }
   );
 
-  res.status(200).json({ message: "Login successful.", token: jwtToken });
+  sendSuccess(res, "Login successful.", { token: jwtToken });
 };
