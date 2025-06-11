@@ -46,7 +46,7 @@ export const createTeam = async (req: AuthenticatedRequest, res: Response) => {
   const newTeam = await prisma.team.create({ data: { name } });
 
   const newTeamMember = await prisma.teamMember.create({
-    data: { userId: parseInt(userId, 10), teamId: newTeam.id, role: "owner" },
+    data: { userId: parseInt(userId, 10), teamId: newTeam.id },
   });
 
   sendSuccess(
@@ -84,4 +84,28 @@ export const updateTeam = async (req: AuthenticatedRequest, res: Response) => {
   });
 
   sendSuccess(res, "Team was updated successfully.", updatedTeam);
+};
+
+export const deleteTeam = async (req: AuthenticatedRequest, res: Response) => {
+  const userId = req.userId;
+  const { id: teamId } = req.params;
+
+  if (!userId || !teamId) {
+    throw new AppError("teamId and name are required.", 400);
+  }
+
+  const isMember = await prisma.teamMember.findFirst({
+    where: { teamId: parseInt(teamId, 10), userId: parseInt(userId, 10) },
+  });
+
+  if (!isMember) {
+    throw new AppError(`This userId is not a member `);
+  }
+
+  console.log("test");
+  await prisma.team.delete({
+    where: { id: parseInt(teamId, 10) },
+  });
+
+  res.status(204).send();
 };

@@ -1,6 +1,7 @@
 import { Router } from "express";
 import {
   createTeam,
+  deleteTeam,
   getAllTeam,
   getTeamById,
   updateTeam,
@@ -13,7 +14,6 @@ router.get("/", authenticateToken, getAllTeam);
 router.get("/:id", authenticateToken, getTeamById);
 router.post("/", authenticateToken, createTeam);
 router.patch("/:id", authenticateToken, updateTeam);
-
-// delete team
+router.delete("/:id", authenticateToken, deleteTeam);
 
 export default router;
