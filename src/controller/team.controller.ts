@@ -1,4 +1,4 @@
-import { NextFunction, Response } from "express";
+import { Response } from "express";
 import { prisma } from "../config/db";
 import { AuthenticatedRequest } from "../types";
 import { AppError } from "../utils/AppError";
