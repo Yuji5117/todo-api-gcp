@@ -102,10 +102,56 @@ export const deleteTeam = async (req: AuthenticatedRequest, res: Response) => {
     throw new AppError(`This userId is not a member `);
   }
 
-  console.log("test");
   await prisma.team.delete({
     where: { id: parseInt(teamId, 10) },
   });
 
   res.status(204).send();
+};
+
+export const addTeamMember = async (
+  req: AuthenticatedRequest,
+  res: Response
+) => {
+  const { userId } = req.body;
+  const { teamId } = req.params;
+
+  if (!userId || !teamId) {
+    throw new AppError("teamId and userId are required.", 400);
+  }
+
+  const exists = await prisma.teamMember.findUnique({
+    where: {
+      userId_teamId: {
+        teamId: parseInt(teamId, 10),
+        userId: parseInt(userId, 10),
+      },
+    },
+  });
+
+  if (exists) {
+    throw new AppError("This user is already a member of the team.", 409);
+  }
+
+  const user = await prisma.user.findUnique({
+    where: { id: parseInt(userId, 10) },
+  });
+
+  if (!user) {
+    throw new AppError("User not found", 404);
+  }
+
+  const team = await prisma.team.findUnique({
+    where: { id: parseInt(teamId, 10) },
+  });
+
+  if (!team) {
+    throw new AppError("Team not found", 404);
+  }
+
+  const newMember = await prisma.teamMember.create({
+    data: { teamId: parseInt(teamId, 10), userId: parseInt(userId, 10) },
+  });
+
+  sendSuccess(res, "Added new Member successfully", newMember, 201);
 };
