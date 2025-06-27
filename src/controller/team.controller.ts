@@ -20,7 +20,10 @@ export const getAllTeamController = async (
   sendSuccess(res, "Teams retrieved successfully.", teams);
 };
 
-export const getTeamById = async (req: AuthenticatedRequest, res: Response) => {
+export const getTeamByIdController = async (
+  req: AuthenticatedRequest,
+  res: Response
+) => {
   const { id } = req.params;
 
   if (!id) {
@@ -36,7 +39,10 @@ export const getTeamById = async (req: AuthenticatedRequest, res: Response) => {
   sendSuccess(res, "A team retrieved successfully.", team);
 };
 
-export const createTeam = async (req: AuthenticatedRequest, res: Response) => {
+export const createTeamController = async (
+  req: AuthenticatedRequest,
+  res: Response
+) => {
   const userId = req.userId;
   const { name } = req.body;
 
@@ -61,7 +67,10 @@ export const createTeam = async (req: AuthenticatedRequest, res: Response) => {
   );
 };
 
-export const updateTeam = async (req: AuthenticatedRequest, res: Response) => {
+export const updateTeamController = async (
+  req: AuthenticatedRequest,
+  res: Response
+) => {
   const userId = req.userId;
   const { id: teamId } = req.params;
   const { name } = req.body;
@@ -87,7 +96,10 @@ export const updateTeam = async (req: AuthenticatedRequest, res: Response) => {
   sendSuccess(res, "Team was updated successfully.", updatedTeam);
 };
 
-export const deleteTeam = async (req: AuthenticatedRequest, res: Response) => {
+export const deleteTeamController = async (
+  req: AuthenticatedRequest,
+  res: Response
+) => {
   const userId = req.userId;
   const { id: teamId } = req.params;
 
@@ -110,7 +122,7 @@ export const deleteTeam = async (req: AuthenticatedRequest, res: Response) => {
   res.status(204).send();
 };
 
-export const addTeamMember = async (
+export const addTeamMemberController = async (
   req: AuthenticatedRequest,
   res: Response
 ) => {

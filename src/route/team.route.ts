@@ -1,21 +1,21 @@
 import { Router } from "express";
 import {
-  addTeamMember,
-  createTeam,
-  deleteTeam,
+  addTeamMemberController,
+  createTeamController,
+  deleteTeamController,
   getAllTeamController,
-  getTeamById,
-  updateTeam,
+  getTeamByIdController,
+  updateTeamController,
 } from "../controller/team.controller";
 import { authenticateToken } from "../middleware/auth.middleware";
 
 const router = Router();
 
 router.get("/", authenticateToken, getAllTeamController);
-router.get("/:id", authenticateToken, getTeamById);
-router.post("/", authenticateToken, createTeam);
-router.patch("/:id", authenticateToken, updateTeam);
-router.delete("/:id", authenticateToken, deleteTeam);
-router.post("/:teamId/members", authenticateToken, addTeamMember);
+router.get("/:id", authenticateToken, getTeamByIdController);
+router.post("/", authenticateToken, createTeamController);
+router.patch("/:id", authenticateToken, updateTeamController);
+router.delete("/:id", authenticateToken, deleteTeamController);
+router.post("/:teamId/members", authenticateToken, addTeamMemberController);
 
 export default router;
