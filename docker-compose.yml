@@ -13,6 +13,7 @@ services:
       - ./tsconfig.json:/usr/src/app/tsconfig.json
     depends_on:
       - db
+    command: ["sh", "./entrypoint.sh"]
 
   db:
     image: postgres:15.3
