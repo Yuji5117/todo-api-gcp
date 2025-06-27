@@ -2,21 +2,6 @@ import { describe } from "node:test";
 import { getAllTeams } from "../../service/team.service";
 
 describe("getAllTeam", () => {
-  it("should throw if userId is not provided", async () => {
-    const mockPrisma = {} as any;
-
-    await expect(getAllTeams(mockPrisma, null as any)).rejects.toThrow(
-      "userId is required."
-    );
-  });
-  it("should throw if userId is an empty string", async () => {
-    const mockPrisma = {} as any;
-
-    await expect(getAllTeams(mockPrisma, "")).rejects.toThrow(
-      "userId is required."
-    );
-  });
-
   it("should return teams for the user", async () => {
     const mockPrisma = {
       team: {

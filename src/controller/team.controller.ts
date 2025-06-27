@@ -3,18 +3,19 @@ import { prisma } from "../config/db";
 import { AuthenticatedRequest } from "../types";
 import { AppError } from "../utils/AppError";
 import { sendSuccess } from "../utils/sendResponse";
+import { getAllTeams } from "../service/team.service";
 
-export const getAllTeam = async (req: AuthenticatedRequest, res: Response) => {
+export const getAllTeamController = async (
+  req: AuthenticatedRequest,
+  res: Response
+) => {
   const userId = req.userId;
 
   if (!userId) {
     throw new AppError("userId is required.", 400);
   }
 
-  const teams = await prisma.team.findMany({
-    where: { TeamMembers: { some: { userId: parseInt(userId, 10) } } },
-    include: { TeamMembers: true },
-  });
+  const teams = await getAllTeams(prisma, userId);
 
   sendSuccess(res, "Teams retrieved successfully.", teams);
 };
