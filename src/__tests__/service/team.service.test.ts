@@ -11,8 +11,6 @@ describe("getAllTeam", () => {
 
     const result = await getAllTeams(mockPrisma, "123");
 
-    console.log("mockPrisma", mockPrisma.team.findMany.mock.calls);
-
     expect(result).toEqual([{ id: 1, name: "Team A" }]);
     expect(mockPrisma.team.findMany).toHaveBeenCalledWith({
       where: { TeamMembers: { some: { userId: 123 } } },
