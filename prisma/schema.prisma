@@ -13,7 +13,7 @@ model User {
   email String @unique @db.VarChar(255)
   password String @db.VarChar(255)
   TeamMembers TeamMember[]
-
+  Comments Comment[]
 }
 
 
@@ -21,6 +21,7 @@ model Team {
   id Int @id @default(autoincrement())
   name String @db.VarChar(255)
   TeamMembers TeamMember[]
+  Projects Project[]
 }
 
 model TeamMember {
@@ -32,4 +33,46 @@ model TeamMember {
   team Team @relation(fields: [teamId], references: [id], onDelete: Cascade)
 
   @@unique([userId, teamId])
+}
+
+model Project {
+  id Int @id @default(autoincrement())
+  name String @db.VarChar(255)
+  description String @db.VarChar(255)
+  teamId Int
+
+  team Team @relation(fields: [teamId], references: [id])
+
+  Tasks Task[]
+}
+
+model Task {
+  id Int @id @default(autoincrement())
+  title String @db.VarChar(255)
+  description String @db.VarChar(255)
+  isCompleted Boolean @default(false)
+  projectId Int
+
+  project Project @relation(fields: [projectId], references: [id])
+
+  taskAssignees TaskAssignee[]
+  comments Comment[]
+}
+
+model TaskAssignee {
+  id Int @id @default(autoincrement())
+  taskId Int
+  teamMemberId Int
+
+  task Task @relation(fields: [taskId], references: [id], onDelete: Cascade)
+}
+
+model Comment {
+  id Int @id @default(autoincrement())
+  content String @db.VarChar(255)
+  taskId Int
+  userId Int
+
+  task Task @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id])
 }
