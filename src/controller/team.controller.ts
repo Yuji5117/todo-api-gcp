@@ -5,6 +5,7 @@ import { AppError } from "../utils/AppError";
 import { sendSuccess } from "../utils/sendResponse";
 import {
   createTeam,
+  deleteTeam,
   getAllTeams,
   getTeamById,
   updateTeam,
@@ -88,17 +89,7 @@ export const deleteTeamController = async (
     throw new AppError("teamId and name are required.", 400);
   }
 
-  const isMember = await prisma.teamMember.findFirst({
-    where: { teamId: parseInt(teamId, 10), userId: parseInt(userId, 10) },
-  });
-
-  if (!isMember) {
-    throw new AppError(`This userId is not a member `);
-  }
-
-  await prisma.team.delete({
-    where: { id: parseInt(teamId, 10) },
-  });
+  await deleteTeam(prisma, parseInt(userId, 10), parseInt(teamId, 10));
 
   res.status(204).send();
 };

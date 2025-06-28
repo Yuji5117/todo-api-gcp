@@ -1,3 +1,4 @@
+import { prisma } from "./../config/db";
 import { PrismaClient } from "@prisma/client";
 import { AppError } from "../utils/AppError";
 
@@ -52,5 +53,23 @@ export const updateTeam = async (
     data: {
       name,
     },
+  });
+};
+
+export const deleteTeam = async (
+  prisma: PrismaClient,
+  userId: number,
+  teamId: number
+) => {
+  const isMember = await prisma.teamMember.findFirst({
+    where: { teamId: teamId, userId: userId },
+  });
+
+  if (!isMember) {
+    throw new AppError(`This userId is not a member `);
+  }
+
+  await prisma.team.delete({
+    where: { id: teamId },
   });
 };
