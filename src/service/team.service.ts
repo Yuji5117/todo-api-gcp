@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import { AppError } from "../utils/AppError";
 
 export const getAllTeams = async (prisma: PrismaClient, userId: string) => {
   return await prisma.team.findMany({
@@ -30,4 +31,26 @@ export const createTeam = async (
     newTeam,
     newTeamMember,
   };
+};
+
+export const updateTeam = async (
+  prisma: PrismaClient,
+  userId: number,
+  teamId: number,
+  name: string
+) => {
+  const isMember = await prisma.teamMember.findFirst({
+    where: { teamId: teamId, userId: userId },
+  });
+
+  if (!isMember) {
+    throw new AppError(`This userId is not a member `);
+  }
+
+  return await prisma.team.update({
+    where: { id: teamId },
+    data: {
+      name,
+    },
+  });
 };

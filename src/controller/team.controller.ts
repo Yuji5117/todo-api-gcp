@@ -3,7 +3,12 @@ import { prisma } from "../config/db";
 import { AuthenticatedRequest } from "../types";
 import { AppError } from "../utils/AppError";
 import { sendSuccess } from "../utils/sendResponse";
-import { createTeam, getAllTeams, getTeamById } from "../service/team.service";
+import {
+  createTeam,
+  getAllTeams,
+  getTeamById,
+  updateTeam,
+} from "../service/team.service";
 
 export const getAllTeamController = async (
   req: AuthenticatedRequest,
@@ -62,22 +67,14 @@ export const updateTeamController = async (
     throw new AppError("teamId and name are required.", 400);
   }
 
-  const isMember = await prisma.teamMember.findFirst({
-    where: { teamId: parseInt(teamId, 10), userId: parseInt(userId, 10) },
-  });
+  const result = await updateTeam(
+    prisma,
+    parseInt(userId, 10),
+    parseInt(teamId, 10),
+    name
+  );
 
-  if (!isMember) {
-    throw new AppError(`This userId is not a member `);
-  }
-
-  const updatedTeam = await prisma.team.update({
-    where: { id: parseInt(teamId, 10) },
-    data: {
-      name,
-    },
-  });
-
-  sendSuccess(res, "Team was updated successfully.", updatedTeam);
+  sendSuccess(res, "Team was updated successfully.", result);
 };
 
 export const deleteTeamController = async (
