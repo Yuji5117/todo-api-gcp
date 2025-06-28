@@ -3,7 +3,7 @@ import { prisma } from "../config/db";
 import { AuthenticatedRequest } from "../types";
 import { AppError } from "../utils/AppError";
 import { sendSuccess } from "../utils/sendResponse";
-import { getAllTeams, getTeamById } from "../service/team.service";
+import { createTeam, getAllTeams, getTeamById } from "../service/team.service";
 
 export const getAllTeamController = async (
   req: AuthenticatedRequest,
@@ -46,21 +46,9 @@ export const createTeamController = async (
     throw new AppError("userId and name are required.", 400);
   }
 
-  const newTeam = await prisma.team.create({ data: { name } });
+  const result = await createTeam(prisma, userId, name);
 
-  const newTeamMember = await prisma.teamMember.create({
-    data: { userId: parseInt(userId, 10), teamId: newTeam.id },
-  });
-
-  sendSuccess(
-    res,
-    "Team was created successfully.",
-    {
-      newTeam,
-      newTeamMember,
-    },
-    201
-  );
+  sendSuccess(res, "Team was created successfully.", result, 201);
 };
 
 export const updateTeamController = async (

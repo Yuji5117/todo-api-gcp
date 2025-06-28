@@ -14,3 +14,20 @@ export const getTeamById = async (prisma: PrismaClient, userId: string) => {
     },
   });
 };
+
+export const createTeam = async (
+  prisma: PrismaClient,
+  userId: string,
+  name: string
+) => {
+  const newTeam = await prisma.team.create({ data: { name } });
+
+  const newTeamMember = await prisma.teamMember.create({
+    data: { userId: parseInt(userId, 10), teamId: newTeam.id },
+  });
+
+  return {
+    newTeam,
+    newTeamMember,
+  };
+};
