@@ -1,4 +1,3 @@
-import { prisma } from "./../config/db";
 import { PrismaClient } from "@prisma/client";
 import { AppError } from "../utils/AppError";
 
@@ -71,5 +70,44 @@ export const deleteTeam = async (
 
   await prisma.team.delete({
     where: { id: teamId },
+  });
+};
+
+export const addTeamMember = async (
+  prisma: PrismaClient,
+  userId: number,
+  teamId: number
+) => {
+  const exists = await prisma.teamMember.findUnique({
+    where: {
+      userId_teamId: {
+        teamId: teamId,
+        userId: userId,
+      },
+    },
+  });
+
+  if (exists) {
+    throw new AppError("This user is already a member of the team.", 409);
+  }
+
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+  });
+
+  if (!user) {
+    throw new AppError("User not found", 404);
+  }
+
+  const team = await prisma.team.findUnique({
+    where: { id: teamId },
+  });
+
+  if (!team) {
+    throw new AppError("Team not found", 404);
+  }
+
+  return await prisma.teamMember.create({
+    data: { teamId: teamId, userId: userId },
   });
 };
