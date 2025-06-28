@@ -3,7 +3,7 @@ import { prisma } from "../config/db";
 import { AuthenticatedRequest } from "../types";
 import { AppError } from "../utils/AppError";
 import { sendSuccess } from "../utils/sendResponse";
-import { getAllTeams } from "../service/team.service";
+import { getAllTeams, getTeamById } from "../service/team.service";
 
 export const getAllTeamController = async (
   req: AuthenticatedRequest,
@@ -30,11 +30,7 @@ export const getTeamByIdController = async (
     throw new AppError("teamId is required.", 400);
   }
 
-  const team = await prisma.team.findUnique({
-    where: {
-      id: parseInt(id, 10),
-    },
-  });
+  const team = await getTeamById(prisma, id);
 
   sendSuccess(res, "A team retrieved successfully.", team);
 };

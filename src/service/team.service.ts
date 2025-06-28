@@ -6,3 +6,11 @@ export const getAllTeams = async (prisma: PrismaClient, userId: string) => {
     include: { TeamMembers: true },
   });
 };
+
+export const getTeamById = async (prisma: PrismaClient, userId: string) => {
+  return await prisma.team.findUnique({
+    where: {
+      id: parseInt(userId, 10),
+    },
+  });
+};
