@@ -109,5 +109,9 @@ export const addTeamMember = async (
 
   return await prisma.teamMember.create({
     data: { teamId: teamId, userId: userId },
+    include: {
+      user: { select: { id: true, email: true } },
+      team: { select: { id: true, name: true } },
+    },
   });
 };
