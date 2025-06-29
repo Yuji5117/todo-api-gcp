@@ -1,5 +1,5 @@
 import { describe } from "node:test";
-import { getAllTeams } from "../../service/team.service";
+import { addTeamMember, getAllTeams } from "../../service/team.service";
 
 describe("getAllTeam", () => {
   it("should return teams for the user", async () => {
@@ -38,4 +38,36 @@ describe("getAllTeam", () => {
 
     await expect(getAllTeams(mockPrisma, "123")).rejects.toThrow("DB Error");
   });
+});
+
+describe("addTeamMemberController", () => {
+  const mockPrisma = {
+    teamMember: {
+      findUnique: jest.fn(),
+    },
+  } as any;
+
+  it("throw error if user is already a member", async () => {
+    mockPrisma.teamMember.findUnique.mockResolvedValue({
+      id: 1,
+    });
+
+    await expect(addTeamMember(mockPrisma, 1, 1)).rejects.toThrow(
+      "This user is already a member of the team."
+    );
+
+    expect(mockPrisma.teamMember.findUnique).toHaveBeenCalledWith({
+      where: {
+        userId_teamId: {
+          teamId: 1,
+          userId: 1,
+        },
+      },
+    });
+  });
+
+  // throw error if user doesnt exist
+  it("throw error if user doesn't exist", async () => {});
+  // throw error if team doesnt exsit
+  it("throw error if team doesn't exsit", async () => {});
 });
